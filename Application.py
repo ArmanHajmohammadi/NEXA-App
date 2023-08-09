@@ -100,6 +100,8 @@ class ReporterApp(QtWidgets.QWidget):
         self.text_fields = []
         for i in range(num_fields):
             text_field = QLineEdit()
+            text_field.setPlaceholderText(
+                "The first cell of the column (E.g. 'A1' )")
             vbox2.addWidget(text_field)
             self.text_fields.append(text_field)
 
@@ -107,6 +109,8 @@ class ReporterApp(QtWidgets.QWidget):
         self.progress_bar.setValue(value)
 
     def run_report(self):
+        self.run_button.setText("Processing...")
+        self.run_button.setEnabled(False)
         file_path = self.file_lineedit.text()
         num_fields = self.spin_field.value()
         text_values = [field.text() for field in self.text_fields]
@@ -114,15 +118,18 @@ class ReporterApp(QtWidgets.QWidget):
         print("Number of Fields:", num_fields)
         print("Text Values:", text_values)
         for i in range(1, 32):
-            self.update_progress(int(i/31 * 100))
+
+            reportSheet.cell(
+                row=1, column=i*(len(text_values)-1)).value = str(i)
+            temple_path = ""
             if (i < 10):
                 temple_path = file_path
-                temple_path.replace("01", "0" + str(i))
+                temple_path = temple_path.replace("01", "0" + str(i))
                 path = Path(temple_path)
                 address = temple_path
             else:
                 temple_path = file_path
-                temple_path.replace("01", str(i))
+                temple_path = temple_path.replace("01", str(i))
                 path = Path(temple_path)
                 address = temple_path
 
@@ -141,17 +148,24 @@ class ReporterApp(QtWidgets.QWidget):
                         match = re.match(
                             r"([a-zA-Z]+)([0-9]+)", text_values[j])
 
-                        reportSheet.cell(row=workers.index(intendedCell.value)+1, column=j*i+1).value = sh[
-                            match.group(1) + str(j + int(match.group(2)))].value
+                        reportSheet.cell(row=workers.index(intendedCell.value)+2, column=j+i*(len(text_values)-1)-1).value = sh[
+                            match.group(1) + str(row + int(match.group(2))-1)].value
 
                     row += 1
                     match = re.match(
                         r"([a-zA-Z]+)([0-9]+)", text_values[0])
                     intendedCell = sh[match.group(
                         1) + str(row + int(match.group(2)))]
+            self.update_progress(int(i/31 * 100))
+
         print("******* Completed *******")
+
+        for i in range(0, len(workers)):
+            reportSheet.cell(row=i+2, column=1).value = workers[i]
+        reportSheet.cell(row=1, column=1).value = "روز"
         reportSheet.sheet_view.rightToLeft = True
         report.save('./report.xlsx')
+        self.run_button.setText("Completed!")
         print("Saved")
 
 
