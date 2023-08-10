@@ -120,7 +120,7 @@ class ReporterApp(QtWidgets.QWidget):
         for i in range(1, 32):
 
             reportSheet.cell(
-                row=1, column=i*(len(text_values)-1)).value = str(i)
+                row=1, column=i*(len(text_values)-1)+1).value = str(i)
             temple_path = ""
             if (i < 10):
                 temple_path = file_path
@@ -138,7 +138,7 @@ class ReporterApp(QtWidgets.QWidget):
                 sh = wb.active
 
                 # print(intendedCell.value)
-                row = 1
+                row = 0
                 intendedCell = sh[text_values[0]]
                 while (intendedCell.value != None):
                     if (not (intendedCell.value in workers)):
@@ -148,9 +148,10 @@ class ReporterApp(QtWidgets.QWidget):
                         match = re.match(
                             r"([a-zA-Z]+)([0-9]+)", text_values[j])
 
-                        reportSheet.cell(row=workers.index(intendedCell.value)+2, column=j+i*(len(text_values)-1)-1).value = sh[
-                            match.group(1) + str(row + int(match.group(2))-1)].value
-
+                        reportSheet.cell(row=workers.index(intendedCell.value)+2, column=j+i*(len(text_values)-1)).value = sh[
+                            match.group(1) + str(row + int(match.group(2)))].value
+                        print("Written in: " + "row= " + str(workers.index(intendedCell.value)+2) + ", column= " + str(j+1+i*(len(text_values)-1)) + "\nThe value: " +
+                              str(match.group(1) + str(row + int(match.group(2)))))
                     row += 1
                     match = re.match(
                         r"([a-zA-Z]+)([0-9]+)", text_values[0])
@@ -162,6 +163,8 @@ class ReporterApp(QtWidgets.QWidget):
 
         for i in range(0, len(workers)):
             reportSheet.cell(row=i+2, column=1).value = workers[i]
+            print(workers[i] + " => inserted to cell: row= " +
+                  str(i+2) + ", column= " + str(1))
         reportSheet.cell(row=1, column=1).value = "روز"
         reportSheet.sheet_view.rightToLeft = True
         report.save('./report.xlsx')

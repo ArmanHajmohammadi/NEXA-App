@@ -2,7 +2,7 @@
  True,
  False,
  True,
- ['D:\\Projects\\NEXA\\report\\Application\\Icon.ico'],
+ 'C:\\Python311\\Lib\\site-packages\\PyInstaller\\bootloader\\images\\icon-console.ico',
  None,
  False,
  False,
@@ -53,7 +53,7 @@
  [],
  False,
  False,
- 1691584139,
+ 1691661794,
  [('run.exe',
    'C:\\Python311\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',
    'EXECUTABLE')])
